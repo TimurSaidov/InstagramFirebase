@@ -20,19 +20,15 @@ class CommentsCollectionViewController: UICollectionViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        collectionView.backgroundColor = .red
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
         navigationItem.title = "Comments"
-        
-        tabBarController?.tabBar.isHidden = true
         
         collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         collectionView.scrollIndicatorInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         collectionView.register(CommentsCollectionViewCell.self, forCellWithReuseIdentifier: cellId)
+        
+        collectionView.backgroundColor = .white
+        collectionView.alwaysBounceVertical = true
+        collectionView.keyboardDismissMode = .interactive
         
         fetchComments()
     }
@@ -44,11 +40,20 @@ class CommentsCollectionViewController: UICollectionViewController {
         reference.observe(.childAdded, with: { (snapshot) in
             guard let dictionary = snapshot.value as? [String: Any] else { return }
             
-            let comment = Comment(dictionary: dictionary)
-            
-            self.comments.append(comment)
-            
-            self.collectionView.reloadData()
+            guard let uid = dictionary["uid"] as? String else { return }
+            Database.database().reference().child("users").child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
+                guard let dictionaryOfUser = snapshot.value as? [String: Any] else { return }
+                
+                let user = User(uid: uid, dictionary: dictionaryOfUser)
+                
+                let comment = Comment(user: user, dictionary: dictionary)
+                
+                self.comments.append(comment)
+                
+                self.collectionView.reloadData()
+            }, withCancel: { (error) in
+                print("Failed to fetch user", error)
+            })
         }) { (error) in
             print("Failed to observe comments", error)
         }
@@ -64,6 +69,16 @@ class CommentsCollectionViewController: UICollectionViewController {
         cell.comment = self.comments[indexPath.item]
         
         return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        return 0
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        tabBarController?.tabBar.isHidden = true
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -93,6 +108,11 @@ class CommentsCollectionViewController: UICollectionViewController {
         
         containerView.addSubview(commentTextField)
         commentTextField.anchor(top: containerView.topAnchor, left: containerView.leftAnchor, bottom: containerView.bottomAnchor, right: sendButton.leftAnchor , paddingTop: 0, paddingLeft: 8, paddingBottom: 0, paddingRight: 0, width: 0, height: 0)
+        
+        let lineSeparatorView = UIView()
+        lineSeparatorView.backgroundColor = UIColor.rgb(red: 230, green: 230, blue: 230)
+        containerView.addSubview(lineSeparatorView)
+        lineSeparatorView.anchor(top: containerView.topAnchor, left: containerView.leftAnchor, bottom: nil, right: containerView.rightAnchor, paddingTop: 0, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0.5)
         
         return containerView
     }()
@@ -125,6 +145,17 @@ class CommentsCollectionViewController: UICollectionViewController {
 
 extension CommentsCollectionViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: view.frame.width, height: 50)
+        let frame = CGRect(x: 0, y: 0, width: view.frame.width, height: 50)
+        let cell = CommentsCollectionViewCell(frame: frame)
+        
+//        cell.comment = comments[indexPath.item]
+        
+        cell.layoutIfNeeded()
+        
+        let targetSize = CGSize(width: view.frame.width, height: 1000)
+        let estimatedSize = cell.systemLayoutSizeFitting(targetSize)
+        
+        let height = max(40 + 8 + 8, estimatedSize.height)
+        return CGSize(width: view.frame.width, height: height)
     }
 }
