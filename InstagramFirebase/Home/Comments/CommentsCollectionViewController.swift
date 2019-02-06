@@ -13,6 +13,10 @@ class CommentsCollectionViewController: UICollectionViewController {
     
     var post: Post?
     
+    let cellId = "cellId"
+    
+    var comments: [Comment] = []
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -25,6 +29,41 @@ class CommentsCollectionViewController: UICollectionViewController {
         navigationItem.title = "Comments"
         
         tabBarController?.tabBar.isHidden = true
+        
+        collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+        collectionView.scrollIndicatorInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+        collectionView.register(CommentsCollectionViewCell.self, forCellWithReuseIdentifier: cellId)
+        
+        fetchComments()
+    }
+    
+    fileprivate func fetchComments() {
+        guard let postId = self.post?.id else { return }
+        
+        let reference = Database.database().reference().child("comments").child(postId)
+        reference.observe(.childAdded, with: { (snapshot) in
+            guard let dictionary = snapshot.value as? [String: Any] else { return }
+            
+            let comment = Comment(dictionary: dictionary)
+            
+            self.comments.append(comment)
+            
+            self.collectionView.reloadData()
+        }) { (error) in
+            print("Failed to observe comments", error)
+        }
+    }
+    
+    override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return comments.count
+    }
+    
+    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! CommentsCollectionViewCell
+        
+        cell.comment = self.comments[indexPath.item]
+        
+        return cell
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -81,5 +120,11 @@ class CommentsCollectionViewController: UICollectionViewController {
     
     override var canBecomeFirstResponder: Bool {
         return true
+    }
+}
+
+extension CommentsCollectionViewController: UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize(width: view.frame.width, height: 50)
     }
 }
