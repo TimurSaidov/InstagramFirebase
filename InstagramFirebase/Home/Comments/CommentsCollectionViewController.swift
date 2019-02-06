@@ -17,6 +17,9 @@ class CommentsCollectionViewController: UICollectionViewController {
     
     var comments: [Comment] = []
     
+    var count: Int = 0
+    var currentCount: Int = 0
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -30,14 +33,29 @@ class CommentsCollectionViewController: UICollectionViewController {
         collectionView.alwaysBounceVertical = true
         collectionView.keyboardDismissMode = .interactive
         
+        commentsCount()
         fetchComments()
+    }
+    
+    fileprivate func commentsCount() {
+        guard let postId = self.post?.id else { return }
+        
+        let reference = Database.database().reference().child("comments").child(postId)
+        reference.observe(.value, with: { (snapshot) in
+            guard let dictionary = snapshot.value as? [String: Any] else { return }
+            
+            self.count = dictionary.keys.count
+            print(self.count)
+        }) { (error) in
+            print("Failed to fetch comments count")
+        }
     }
     
     fileprivate func fetchComments() {
         guard let postId = self.post?.id else { return }
         
         let reference = Database.database().reference().child("comments").child(postId)
-        reference.observe(.childAdded, with: { (snapshot) in
+        reference.observe(.childAdded, with: { (snapshot) in // .childAdded - поэтому при отправке комментария (send), он появляется на экране, то есть обновляется Collection View.
             guard let dictionary = snapshot.value as? [String: Any] else { return }
             
             guard let uid = dictionary["uid"] as? String else { return }
@@ -50,7 +68,10 @@ class CommentsCollectionViewController: UICollectionViewController {
                 
                 self.comments.append(comment)
                 
-                self.collectionView.reloadData()
+                self.currentCount += 1
+                if self.currentCount == self.count {
+                    self.collectionView.reloadData()
+                }
             }, withCancel: { (error) in
                 print("Failed to fetch user", error)
             })
@@ -130,6 +151,8 @@ class CommentsCollectionViewController: UICollectionViewController {
             
             print("Successfully inserted comment")
         }
+        
+        commentTextField.text = ""
     } 
     
     override var inputAccessoryView: UIView? {
