@@ -36,6 +36,7 @@
 		39C716E5220A1DE300BA62E7 /* PhotoHeaderCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39C716E4220A1DE300BA62E7 /* PhotoHeaderCollectionViewCell.swift */; };
 		39C716E7220A1DED00BA62E7 /* PhotoCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39C716E6220A1DED00BA62E7 /* PhotoCollectionViewCell.swift */; };
 		39C716E9220A1DF900BA62E7 /* SharePhotoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39C716E8220A1DF900BA62E7 /* SharePhotoViewController.swift */; };
+		39FE1FAA220AF5EB00B7A680 /* CommentsCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39FE1FA9220AF5EB00B7A680 /* CommentsCollectionViewController.swift */; };
 		401066F64389373A2946C1D5 /* Pods_InstagramFirebase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 184B83BBF256F2F60D4C30C5 /* Pods_InstagramFirebase.framework */; };
 /* End PBXBuildFile section */
 
@@ -73,6 +74,7 @@
 		39C716E4220A1DE300BA62E7 /* PhotoHeaderCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoHeaderCollectionViewCell.swift; sourceTree = "<group>"; };
 		39C716E6220A1DED00BA62E7 /* PhotoCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoCollectionViewCell.swift; sourceTree = "<group>"; };
 		39C716E8220A1DF900BA62E7 /* SharePhotoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharePhotoViewController.swift; sourceTree = "<group>"; };
+		39FE1FA9220AF5EB00B7A680 /* CommentsCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentsCollectionViewController.swift; sourceTree = "<group>"; };
 		D66787C1DF755ECE3F3264D3 /* Pods-InstagramFirebase.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-InstagramFirebase.release.xcconfig"; path = "Pods/Target Support Files/Pods-InstagramFirebase/Pods-InstagramFirebase.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -169,6 +171,7 @@
 			children = (
 				39C716C2220A182900BA62E7 /* HomeCollectionViewController.swift */,
 				39C716C4220A183800BA62E7 /* HomeCollectionViewCell.swift */,
+				39FE1FA9220AF5EB00B7A680 /* CommentsCollectionViewController.swift */,
 			);
 			path = Home;
 			sourceTree = "<group>";
@@ -381,6 +384,7 @@
 				39C716CF220A18E900BA62E7 /* CustomAnimationDismisser.swift in Sources */,
 				39C716C5220A183800BA62E7 /* HomeCollectionViewCell.swift in Sources */,
 				39C716E5220A1DE300BA62E7 /* PhotoHeaderCollectionViewCell.swift in Sources */,
+				39FE1FAA220AF5EB00B7A680 /* CommentsCollectionViewController.swift in Sources */,
 				39C716BB220A166500BA62E7 /* MainTabBarController.swift in Sources */,
 				39C716E9220A1DF900BA62E7 /* SharePhotoViewController.swift in Sources */,
 				39C716CB220A18C900BA62E7 /* PreviewPhotoContainerView.swift in Sources */,

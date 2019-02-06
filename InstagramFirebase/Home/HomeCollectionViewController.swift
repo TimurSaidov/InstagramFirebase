@@ -9,7 +9,7 @@
 import UIKit
 import Firebase
 
-class HomeCollectionViewController: UICollectionViewController {
+class HomeCollectionViewController: UICollectionViewController, HomePostCellDelegate {
     
     let loadingScreen = UIView()
     let activityIndicator = UIActivityIndicatorView()
@@ -93,6 +93,9 @@ class HomeCollectionViewController: UICollectionViewController {
             
             let post = postsHome[indexPath.item]
             
+            cell.delegate = self
+            cell.post = post
+            
             cell.profileImageView.image = profileImageHome["\(post.user.username)"]
             
             cell.userProfileLabel.text = post.user.username
@@ -119,6 +122,12 @@ class HomeCollectionViewController: UICollectionViewController {
         let cellWhileFalse = collectionView.dequeueReusableCell(withReuseIdentifier: "CellId", for: indexPath)
         
         return cellWhileFalse
+    }
+    
+    //  Протокол HomePostCellDelegate.
+    func didTapComment(post: Post) {
+        let commentsCollectionVC = CommentsCollectionViewController(collectionViewLayout: UICollectionViewFlowLayout())
+        navigationController?.pushViewController(commentsCollectionVC, animated: true)
     }
     
     // Set the activity indicator into the main view.

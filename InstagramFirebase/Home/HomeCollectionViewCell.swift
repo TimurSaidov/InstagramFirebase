@@ -8,7 +8,15 @@
 
 import UIKit
 
+protocol HomePostCellDelegate {
+    func didTapComment(post: Post)
+}
+
 class HomeCollectionViewCell: UICollectionViewCell {
+    
+    var delegate: HomePostCellDelegate?
+    var post: Post?
+    
     @IBOutlet weak var photoImageView: UIImageView!
     @IBOutlet weak var profileImageView: UIImageView!
     @IBOutlet weak var userProfileLabel: UILabel!
@@ -18,4 +26,15 @@ class HomeCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var sendMessageButton: UIButton!
     @IBOutlet weak var bookmarkButton: UIButton!
     @IBOutlet weak var captionLabel: UILabel!
+    
+    override func awakeFromNib() {
+        commentButton.addTarget(self, action: #selector(handleComment), for: .touchUpInside)
+    }
+    
+    @objc func handleComment() {
+        guard let post = post else { return }
+        print("Selected post caption is - \(post.caption)")
+        
+        delegate?.didTapComment(post: post)
+    }
 }
