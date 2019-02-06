@@ -101,7 +101,7 @@ class Model: NSObject {
                             guard let creationDate = dictionary["creationDate"] as? Double else { return }
                             let secondsFrom1970 = Date(timeIntervalSince1970: creationDate)
                             
-                            let post = Post(user: userFollowing, imageData: nil, caption: caption, creationDateNum: creationDate, creationDate: secondsFrom1970, imageUrl: postsFollowingImageUrlString)
+                            let post = Post(id: key, user: userFollowing, imageData: nil, caption: caption, creationDateNum: creationDate, creationDate: secondsFrom1970, imageUrl: postsFollowingImageUrlString)
                             
                             postsHome.append(post)
                         })
@@ -174,7 +174,7 @@ class Model: NSObject {
                     guard let creationDate = dictionary["creationDate"] as? Double else { return }
                     let secondsFrom1970 = Date(timeIntervalSince1970: creationDate)
                     
-                    let post = Post(user: user, imageData: nil, caption: caption, creationDateNum: creationDate, creationDate: secondsFrom1970, imageUrl: postsImageUrlString)
+                    let post = Post(id: key, user: user, imageData: nil, caption: caption, creationDateNum: creationDate, creationDate: secondsFrom1970, imageUrl: postsImageUrlString)
                     
                     postsHome.append(post)
                 })
@@ -252,7 +252,7 @@ class Model: NSObject {
                         guard let creationDate = dictionary["creationDate"] as? Double else { return }
                         let secondsFrom1970 = Date(timeIntervalSince1970: creationDate)
                         
-                        let post = Post(user: user, imageData: postImageData, caption: caption, creationDateNum: creationDate, creationDate: secondsFrom1970, imageUrl: nil)
+                        let post = Post(id: key, user: user, imageData: postImageData, caption: caption, creationDateNum: creationDate, creationDate: secondsFrom1970, imageUrl: nil)
                         
                         postsProfile.append(post)
                     } catch {

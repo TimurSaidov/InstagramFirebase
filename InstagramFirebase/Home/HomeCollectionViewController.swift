@@ -127,6 +127,7 @@ class HomeCollectionViewController: UICollectionViewController, HomePostCellDele
     //  Протокол HomePostCellDelegate.
     func didTapComment(post: Post) {
         let commentsCollectionVC = CommentsCollectionViewController(collectionViewLayout: UICollectionViewFlowLayout())
+        commentsCollectionVC.post = post
         navigationController?.pushViewController(commentsCollectionVC, animated: true)
     }
     
