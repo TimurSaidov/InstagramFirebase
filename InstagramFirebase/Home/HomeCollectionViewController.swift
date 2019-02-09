@@ -96,6 +96,8 @@ class HomeCollectionViewController: UICollectionViewController, HomePostCellDele
             cell.delegate = self
             cell.post = post
             
+            cell.likeButton.setImage(post.hasLiked == true ? UIImage(named: "like_selected")?.withRenderingMode(.alwaysOriginal) : UIImage(named: "like_unselected")?.withRenderingMode(.alwaysOriginal), for: .normal)
+            
             cell.profileImageView.image = profileImageHome["\(post.user.username)"]
             
             cell.userProfileLabel.text = post.user.username
@@ -129,6 +131,32 @@ class HomeCollectionViewController: UICollectionViewController, HomePostCellDele
         let commentsCollectionVC = CommentsCollectionViewController(collectionViewLayout: UICollectionViewFlowLayout())
         commentsCollectionVC.post = post
         navigationController?.pushViewController(commentsCollectionVC, animated: true)
+    }
+    
+    func didLike(for cell: HomeCollectionViewCell) {
+        guard let indexPath = collectionView.indexPath(for: cell) else { return }
+        
+        var post = postsHome[indexPath.item]
+        
+        guard let postId = post.id else { return }
+        
+        guard let uid = Auth.auth().currentUser?.uid else { return }
+        
+        let values = [uid: post.hasLiked == true ? 0 : 1]
+        
+        Database.database().reference().child("likes").child(postId).updateChildValues(values) { (error, reference) in
+            if let error = error {
+                print("Failed to like post", error)
+                return
+            }
+            
+            print("Successfully liked post")
+            
+            post.hasLiked = !post.hasLiked!
+            postsHome[indexPath.item] = post // Перезапись экземпляра класса Post в глобальном массиве postsHome. Если бы Post был классом, то перезапись не нужна была (класс - ссылочный тип данных).
+            
+            self.collectionView.reloadItems(at: [indexPath])
+        }
     }
     
     // Set the activity indicator into the main view.

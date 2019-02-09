@@ -10,6 +10,7 @@ import UIKit
 
 protocol HomePostCellDelegate {
     func didTapComment(post: Post)
+    func didLike(for cell: HomeCollectionViewCell)
 }
 
 class HomeCollectionViewCell: UICollectionViewCell {
@@ -28,7 +29,12 @@ class HomeCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var captionLabel: UILabel!
     
     override func awakeFromNib() {
+        likeButton.addTarget(self, action: #selector(handleLike), for: .touchUpInside)
         commentButton.addTarget(self, action: #selector(handleComment), for: .touchUpInside)
+    }
+    
+    @objc func handleLike() {
+        delegate?.didLike(for: self)
     }
     
     @objc func handleComment() {

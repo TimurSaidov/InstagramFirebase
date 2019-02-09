@@ -17,6 +17,8 @@ struct Post {
     let creationDateNum: Double
     let creationDate: Date
     
+    var hasLiked: Bool?
+    
     // Если картинки постов грузятся уже после отображения самих постов.
     let imageUrl: String?
 }

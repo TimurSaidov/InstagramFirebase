@@ -41,6 +41,21 @@ class Model: NSObject {
                 posts = postsDictionary
             }
             
+            var likedArray: [Bool] = []
+            posts.forEach({ (key, value) in
+                Database.database().reference().child("likes").child(key).child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
+                    if let value = snapshot.value as? Int, value == 1 {
+                        let hasLiked = true
+                        likedArray.append(hasLiked)
+                    } else {
+                        let hasLiked = false
+                        likedArray.append(hasLiked)
+                    }
+                }, withCancel: { (error) in
+                    print("Failed to fetch like for post:", error)
+                })
+            })
+            
             var followingUid: [String] = []
             if dictionary["following"] != nil {
                 guard let followingDictionary = dictionary["following"] as? [String: Any] else { return }
@@ -63,6 +78,21 @@ class Model: NSObject {
                         postsFollowing = postsFollowingDictionary
                     }
                     
+                    var likedArrayFollowing: [Bool] = []
+                    postsFollowing.forEach({ (key, value) in
+                        Database.database().reference().child("likes").child(key).child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
+                            if let value = snapshot.value as? Int, value == 1 {
+                                let hasLiked = true
+                                likedArrayFollowing.append(hasLiked)
+                            } else {
+                                let hasLiked = false
+                                likedArrayFollowing.append(hasLiked)
+                            }
+                        }, withCancel: { (error) in
+                            print("Failed to fetch like for post:", error)
+                        })
+                    })
+                    
                     guard let url = URL(string: userFollowing.profileImageUrl) else { return }
                     
                     let taskToLoadFollowingProfileImageAndPosts = URLSession.shared.dataTask(with: url) { (data, response, error) in
@@ -76,21 +106,22 @@ class Model: NSObject {
                         guard let data = data else { return }
                         print(data)
                         
+                        var i: Int = 0
                         postsFollowing.forEach({ (key, value) in
                             guard let dictionary = value as? [String: Any] else { return }
                             
                             guard let postsFollowingImageUrlString = dictionary["postImageUrl"] as? String else { return }
                             
 //                            guard let postFollowingImageUrl = URL(string: postsFollowingImageUrlString) else { return }
-//                            
+//
 //                            print("Loading following post image")
 //                            do {
 //                                let postFollowingImageData = try Data(contentsOf: postFollowingImageUrl)
-//                                
+//
 //                                guard let caption = dictionary["caption"] as? String else { return }
 //                                guard let creationDate = dictionary["creationDate"] as? Double else { return }
 //                                let secondsFrom1970 = Date(timeIntervalSince1970: creationDate)
-//                                
+//
 //                                let post = Post(user: userFollowing, imageData: postFollowingImageData, caption: caption, creationDateNum: creationDate, creationDate: secondsFrom1970, imageUrl: nil)
 //                                
 //                                postsHome.append(post)
@@ -100,10 +131,13 @@ class Model: NSObject {
                             guard let caption = dictionary["caption"] as? String else { return }
                             guard let creationDate = dictionary["creationDate"] as? Double else { return }
                             let secondsFrom1970 = Date(timeIntervalSince1970: creationDate)
+                            let hasLiked = likedArrayFollowing[i]
                             
-                            let post = Post(id: key, user: userFollowing, imageData: nil, caption: caption, creationDateNum: creationDate, creationDate: secondsFrom1970, imageUrl: postsFollowingImageUrlString)
+                            let post = Post(id: key, user: userFollowing, imageData: nil, caption: caption, creationDateNum: creationDate, creationDate: secondsFrom1970, hasLiked: hasLiked, imageUrl: postsFollowingImageUrlString)
                             
                             postsHome.append(post)
+                            
+                            i += 1
                         })
                         
                         DispatchQueue.main.async {
@@ -149,6 +183,7 @@ class Model: NSObject {
                 guard let data = data else { return }
                 print(data)
                 
+                var i = 0
                 posts.forEach({ (key, value) in
                     guard let dictionary = value as? [String: Any] else { return }
                     
@@ -163,7 +198,7 @@ class Model: NSObject {
 //                        guard let caption = dictionary["caption"] as? String else { return }
 //                        guard let creationDate = dictionary["creationDate"] as? Double else { return }
 //                        let secondsFrom1970 = Date(timeIntervalSince1970: creationDate)
-//
+//                        
 //                        let post = Post(user: user, imageData: postImageData, caption: caption, creationDateNum: creationDate, creationDate: secondsFrom1970, imageUrl: nil)
 //
 //                        postsHome.append(post)
@@ -173,10 +208,13 @@ class Model: NSObject {
                     guard let caption = dictionary["caption"] as? String else { return }
                     guard let creationDate = dictionary["creationDate"] as? Double else { return }
                     let secondsFrom1970 = Date(timeIntervalSince1970: creationDate)
-                    
-                    let post = Post(id: key, user: user, imageData: nil, caption: caption, creationDateNum: creationDate, creationDate: secondsFrom1970, imageUrl: postsImageUrlString)
+                    let hasLiked = likedArray[i]
+                   
+                    let post = Post(id: key, user: user, imageData: nil, caption: caption, creationDateNum: creationDate, creationDate: secondsFrom1970, hasLiked: hasLiked, imageUrl: postsImageUrlString)
                     
                     postsHome.append(post)
+                    
+                    i += 1
                 })
                 
                 DispatchQueue.main.async {
@@ -252,7 +290,7 @@ class Model: NSObject {
                         guard let creationDate = dictionary["creationDate"] as? Double else { return }
                         let secondsFrom1970 = Date(timeIntervalSince1970: creationDate)
                         
-                        let post = Post(id: key, user: user, imageData: postImageData, caption: caption, creationDateNum: creationDate, creationDate: secondsFrom1970, imageUrl: nil)
+                        let post = Post(id: key, user: user, imageData: postImageData, caption: caption, creationDateNum: creationDate, creationDate: secondsFrom1970, hasLiked: nil, imageUrl: nil)
                         
                         postsProfile.append(post)
                     } catch {
