@@ -30,6 +30,8 @@ class Model: NSObject {
     
     func fetchPostsWithUserUid(uid: String, completionHandler: @escaping () -> ()) {
         Database.database().reference(withPath: "users").child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
+            print("UID: \(uid)")
+            
             guard let dictionary = snapshot.value as? [String: Any] else { return }
             print("Fetched user: \(dictionary)")
             userHome = User(uid: uid, dictionary: dictionary)
@@ -41,16 +43,26 @@ class Model: NSObject {
                 posts = postsDictionary
             }
             
-            var likedArray: [Bool] = []
+            var likeDict: [String: Bool] = [:]
             posts.forEach({ (key, value) in
-                Database.database().reference().child("likes").child(key).child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
-                    if let value = snapshot.value as? Int, value == 1 {
-                        let hasLiked = true
-                        likedArray.append(hasLiked)
-                    } else {
-                        let hasLiked = false
-                        likedArray.append(hasLiked)
-                    }
+                Database.database().reference().child("likes").observeSingleEvent(of: .value, with: { (snapshot) in
+                    guard let dictionary = snapshot.value as? [String: Any] else { return }
+                    
+                    dictionary.forEach({ (likeKey, likeValue) in
+                        if key == likeKey {
+                            let dict = likeValue as! [String: Int]
+                            
+                            dict.forEach({ (likeUidKey, likeUidValue) in
+                                if uid == likeUidKey {
+                                    if likeUidValue == 1 {
+                                        likeDict[likeKey] = true
+                                    } else {
+                                        likeDict[likeKey] = false
+                                    }
+                                }
+                            })
+                        }
+                    })
                 }, withCancel: { (error) in
                     print("Failed to fetch like for post:", error)
                 })
@@ -66,11 +78,12 @@ class Model: NSObject {
             }
             
             var followingCount: Int = 0
-            followingUid.forEach({ (uid) in
-                Database.database().reference(withPath: "users").child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
+            var likeDictFollowing: [String: Bool] = [:]
+            followingUid.forEach({ (followUid) in
+                Database.database().reference(withPath: "users").child(followUid).observeSingleEvent(of: .value, with: { (snapshot) in
                     guard let dictionaryFollowing = snapshot.value as? [String: Any] else { return }
                     print("Fetched following: \(dictionaryFollowing)")
-                    let userFollowing = User(uid: uid, dictionary: dictionaryFollowing)
+                    let userFollowing = User(uid: followUid, dictionary: dictionaryFollowing)
                     
                     var postsFollowing: [String: Any] = [:]
                     if dictionaryFollowing["posts"] != nil {
@@ -78,16 +91,25 @@ class Model: NSObject {
                         postsFollowing = postsFollowingDictionary
                     }
                     
-                    var likedArrayFollowing: [Bool] = []
                     postsFollowing.forEach({ (key, value) in
-                        Database.database().reference().child("likes").child(key).child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
-                            if let value = snapshot.value as? Int, value == 1 {
-                                let hasLiked = true
-                                likedArrayFollowing.append(hasLiked)
-                            } else {
-                                let hasLiked = false
-                                likedArrayFollowing.append(hasLiked)
-                            }
+                        Database.database().reference().child("likes").observeSingleEvent(of: .value, with: { (snapshot) in
+                            guard let dictionary = snapshot.value as? [String: Any] else { return }
+                            
+                            dictionary.forEach({ (likeKey, likeValue) in
+                                if key == likeKey {
+                                    let dict = likeValue as! [String: Int]
+                                    
+                                    dict.forEach({ (likeUidKey, likeUidValue) in
+                                        if uid == likeUidKey {
+                                            if likeUidValue == 1 {
+                                                likeDictFollowing[likeKey] = true
+                                            } else {
+                                                likeDictFollowing[likeKey] = false
+                                            }
+                                        }
+                                    })
+                                }
+                            })
                         }, withCancel: { (error) in
                             print("Failed to fetch like for post:", error)
                         })
@@ -106,7 +128,6 @@ class Model: NSObject {
                         guard let data = data else { return }
                         print(data)
                         
-                        var i: Int = 0
                         postsFollowing.forEach({ (key, value) in
                             guard let dictionary = value as? [String: Any] else { return }
                             
@@ -131,13 +152,20 @@ class Model: NSObject {
                             guard let caption = dictionary["caption"] as? String else { return }
                             guard let creationDate = dictionary["creationDate"] as? Double else { return }
                             let secondsFrom1970 = Date(timeIntervalSince1970: creationDate)
-                            let hasLiked = likedArrayFollowing[i]
+                            
+                            var hasLiked: Bool?
+                            likeDictFollowing.forEach({ (likeKey, likeValue) in
+                                if key == likeKey {
+                                    hasLiked = likeValue
+                                }
+                            })
+                            if hasLiked == nil {
+                                hasLiked = false
+                            }
                             
                             let post = Post(id: key, user: userFollowing, imageData: nil, caption: caption, creationDateNum: creationDate, creationDate: secondsFrom1970, hasLiked: hasLiked, imageUrl: postsFollowingImageUrlString)
                             
                             postsHome.append(post)
-                            
-                            i += 1
                         })
                         
                         DispatchQueue.main.async {
@@ -183,7 +211,6 @@ class Model: NSObject {
                 guard let data = data else { return }
                 print(data)
                 
-                var i = 0
                 posts.forEach({ (key, value) in
                     guard let dictionary = value as? [String: Any] else { return }
                     
@@ -208,13 +235,20 @@ class Model: NSObject {
                     guard let caption = dictionary["caption"] as? String else { return }
                     guard let creationDate = dictionary["creationDate"] as? Double else { return }
                     let secondsFrom1970 = Date(timeIntervalSince1970: creationDate)
-                    let hasLiked = likedArray[i]
+                    
+                    var hasLiked: Bool?
+                    likeDict.forEach({ (likeKey, likeValue) in
+                        if key == likeKey {
+                            hasLiked = likeValue
+                        }
+                    })
+                    if hasLiked == nil {
+                        hasLiked = false
+                    }
                    
                     let post = Post(id: key, user: user, imageData: nil, caption: caption, creationDateNum: creationDate, creationDate: secondsFrom1970, hasLiked: hasLiked, imageUrl: postsImageUrlString)
                     
                     postsHome.append(post)
-                    
-                    i += 1
                 })
                 
                 DispatchQueue.main.async {

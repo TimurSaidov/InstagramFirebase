@@ -152,8 +152,8 @@
 			children = (
 				39C716B3220A15DD00BA62E7 /* User.swift */,
 				39C716B5220A15E600BA62E7 /* Post.swift */,
-				39C716B7220A15F100BA62E7 /* Model.swift */,
 				39FE1FAE220B067800B7A680 /* Comment.swift */,
+				39C716B7220A15F100BA62E7 /* Model.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
