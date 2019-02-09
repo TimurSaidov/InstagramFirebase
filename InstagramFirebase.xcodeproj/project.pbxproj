@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		39151A78220F1250009141BD /* CommentInputAccessoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39151A77220F124F009141BD /* CommentInputAccessoryView.swift */; };
+		39151A7A220F1C15009141BD /* CommentInputTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39151A79220F1C15009141BD /* CommentInputTextView.swift */; };
 		39C7169C220A12ED00BA62E7 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39C7169B220A12ED00BA62E7 /* AppDelegate.swift */; };
 		39C716A1220A12ED00BA62E7 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 39C7169F220A12ED00BA62E7 /* Main.storyboard */; };
 		39C716A3220A12EE00BA62E7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 39C716A2220A12EE00BA62E7 /* Assets.xcassets */; };
@@ -45,6 +47,8 @@
 /* Begin PBXFileReference section */
 		184B83BBF256F2F60D4C30C5 /* Pods_InstagramFirebase.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_InstagramFirebase.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		347F99C78F553CB0C30EA212 /* Pods-InstagramFirebase.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-InstagramFirebase.debug.xcconfig"; path = "Pods/Target Support Files/Pods-InstagramFirebase/Pods-InstagramFirebase.debug.xcconfig"; sourceTree = "<group>"; };
+		39151A77220F124F009141BD /* CommentInputAccessoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentInputAccessoryView.swift; sourceTree = "<group>"; };
+		39151A79220F1C15009141BD /* CommentInputTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentInputTextView.swift; sourceTree = "<group>"; };
 		39C71698220A12ED00BA62E7 /* InstagramFirebase.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = InstagramFirebase.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		39C7169B220A12ED00BA62E7 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		39C716A0220A12ED00BA62E7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -244,6 +248,8 @@
 			children = (
 				39FE1FA9220AF5EB00B7A680 /* CommentsCollectionViewController.swift */,
 				39FE1FAB220B021700B7A680 /* CommentCollectionViewCell.swift */,
+				39151A77220F124F009141BD /* CommentInputAccessoryView.swift */,
+				39151A79220F1C15009141BD /* CommentInputTextView.swift */,
 			);
 			path = Comments;
 			sourceTree = "<group>";
@@ -384,6 +390,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				39151A7A220F1C15009141BD /* CommentInputTextView.swift in Sources */,
 				39C716C9220A18B800BA62E7 /* CameraViewController.swift in Sources */,
 				39C716C3220A182900BA62E7 /* HomeCollectionViewController.swift in Sources */,
 				39C716D2220A1BE800BA62E7 /* UserProfileCollectionViewController.swift in Sources */,
@@ -405,6 +412,7 @@
 				39C716E9220A1DF900BA62E7 /* SharePhotoViewController.swift in Sources */,
 				39C716CB220A18C900BA62E7 /* PreviewPhotoContainerView.swift in Sources */,
 				39C716B2220A15BA00BA62E7 /* Extensions.swift in Sources */,
+				39151A78220F1250009141BD /* CommentInputAccessoryView.swift in Sources */,
 				39C716E7220A1DED00BA62E7 /* PhotoCollectionViewCell.swift in Sources */,
 				39C716D6220A1C0100BA62E7 /* HeaderCollectionReusableView.swift in Sources */,
 				39C716D4220A1BF400BA62E7 /* UserProfileCollectionViewCell.swift in Sources */,
