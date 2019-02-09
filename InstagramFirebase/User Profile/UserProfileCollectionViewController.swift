@@ -9,13 +9,15 @@
 import UIKit
 import Firebase
 
-class UserProfileCollectionViewController: UICollectionViewController {
+class UserProfileCollectionViewController: UICollectionViewController, UserProfileHeaderDelegate {
     
     let loadingScreen = UIView()
     let activityIndicator = UIActivityIndicatorView()
     let loadingLabel = UILabel()
     
     var userUid: String?
+    
+    var isGridView: Bool = true
     
     @IBOutlet weak var logOutButton: UIBarButtonItem!
     
@@ -85,6 +87,7 @@ class UserProfileCollectionViewController: UICollectionViewController {
         }
         
         collectionView.register(UICollectionViewCell.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "HeaderId")
+        collectionView.register(HomeCollectionViewCell.self, forCellWithReuseIdentifier: "CollectionCell")
         
         resetGlobalVariablesForProfile()
         
@@ -153,9 +156,6 @@ class UserProfileCollectionViewController: UICollectionViewController {
             header.editProfileOrFollowButton.layer.borderWidth = 1
             header.editProfileOrFollowButton.layer.cornerRadius = 3
             
-            header.listButton.tintColor = UIColor(white: 0, alpha: 0.2)
-            header.ribbonButton.tintColor = UIColor(white: 0, alpha: 0.2)
-            
             self.navigationItem.title = userProfile!.username
             
             header.profileImageView.image = profileImageProfile
@@ -183,6 +183,8 @@ class UserProfileCollectionViewController: UICollectionViewController {
                     break
                 }
             }
+            
+            header.delegate = self
             
             return header
         }
@@ -227,11 +229,17 @@ class UserProfileCollectionViewController: UICollectionViewController {
     }
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CollectionCell", for: indexPath) as! UserProfileCollectionViewCell
+        if isGridView {
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ProfileCollectionCell", for: indexPath) as! UserProfileCollectionViewCell
+            
+            let imageData = postsProfile[indexPath.row].imageData
+            cell.photoPostImageView.image = UIImage(data: imageData!)
+            cell.photoPostImageView.clipsToBounds = true
+            
+            return cell
+        }
         
-        let imageData = postsProfile[indexPath.row].imageData
-        cell.photoPostImageView.image = UIImage(data: imageData!)
-        cell.photoPostImageView.clipsToBounds = true
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CollectionCell", for: indexPath) // as! HomeCollectionViewCell
         
         return cell
     }
@@ -271,6 +279,17 @@ class UserProfileCollectionViewController: UICollectionViewController {
         activityIndicator.isHidden = true
         loadingLabel.isHidden = true
     }
+    
+    // Методы протокола UserProfileHeaderDelegate.
+    func didChangeToGridView() {
+        isGridView = true
+        collectionView.reloadData()
+    }
+    
+    func didChangeToListView() {
+        isGridView = false
+        collectionView.reloadData()
+    }
 }
 
 extension UserProfileCollectionViewController: UICollectionViewDelegateFlowLayout {
@@ -287,7 +306,10 @@ extension UserProfileCollectionViewController: UICollectionViewDelegateFlowLayou
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let width = (view.frame.width - 2) / 3
-        return CGSize(width: width, height: width)
+        if isGridView {
+            let width = (view.frame.width - 2) / 3
+            return CGSize(width: width, height: width)
+        }
+        return CGSize(width: view.frame.width, height: 200)
     }
 }

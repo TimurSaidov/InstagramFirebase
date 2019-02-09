@@ -118,6 +118,8 @@ class HomeCollectionViewController: UICollectionViewController, HomePostCellDele
             attributedText.append(NSAttributedString(string: timeAgoDisplay, attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14), NSAttributedString.Key.foregroundColor: UIColor.lightGray]))
             cell.captionLabel.attributedText = attributedText
             
+            cell.bookmarkButton.setImage(UIImage(named: "ribbon")?.withRenderingMode(.alwaysOriginal), for: .normal)
+            
             return cell
         }
         
